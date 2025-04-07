@@ -1,3 +1,4 @@
+export const fetchCache = 'force-no-store'
 import axios from 'axios';
 
 // DOM element to display data
