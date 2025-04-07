@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 // DOM element to display data
 const dataContainer = document.getElementById('data-container');
 
