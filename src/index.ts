@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 // DOM element to display data
 const dataContainer = document.getElementById('data-container');
 
@@ -7,29 +5,24 @@ const dataContainer = document.getElementById('data-container');
 function displayData(data: any) {
   if (!dataContainer) return;
   
-  let html = '<h2>BTC Price Data (Last 6 hours)</h2>';
+  let html = '<h2>Latest BTC and ETH Prices</h2>';
   html += '<table border="1" style="width:100%; border-collapse: collapse;">';
-  html += '<tr><th>Time</th><th>Price (USD)</th></tr>';
+  html += '<tr><th>Currency</th><th>Price (USD)</th></tr>';
   
   // Format and display the data
-  for (let i = 0; i < data.length; i++) {
-    const timestamp = new Date(data[i][0]).toLocaleTimeString();
-    const price = parseFloat(data[i][4]).toFixed(2);
-    html += `<tr><td>${timestamp}</td><td>$${price}</td></tr>`;
-  }
+  data.forEach((item: any) => {
+    const price = parseFloat(item.price).toFixed(2);
+    html += `<tr><td>${item.symbol}</td><td>$${price}</td></tr>`;
+  });
   
   html += '</table>';
   dataContainer.innerHTML = html;
 }
 
-const binanceApiUrl = 'https://api.binance.com/api/v3/klines';
-const symbol = 'BTCUSDT';
-const interval = '1h';
-const limit = 6;
+const binanceApiUrl = 'https://api.binance.com/api/v3/ticker/price';
+const symbols = ['BTCUSDT', 'ETHUSDT'];
 const params = {
-  symbol,
-  interval,
-  limit,
+  symbol: symbols.join(','),
 };
 
 // Fetch data from Binance API
@@ -37,7 +30,6 @@ axios.get(binanceApiUrl, { params })
   .then((response: any) => {
     const data = response.data;
 
-    
     // Display the data in the HTML
     displayData(data);
     
@@ -50,3 +42,4 @@ axios.get(binanceApiUrl, { params })
       dataContainer.innerHTML = '<p>Error loading data. Please try again later.</p>';
     }
   });
+
