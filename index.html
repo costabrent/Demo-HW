@@ -1,9 +1,52 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello World</title>
+    <title>Hello World v1</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <h1>Hello World! v1</h1>
   </body>
-</html>
+</html>import axios from 'axios';
+import { DataFrame } from 'pandas-js';
+
+interface BinanceResponse {
+  openTime: number;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+  closeTime: number;
+  quoteAssetVolume: string;
+  numTrades: number;
+  takerBuyBaseAssetVolume: string;
+  takerBuyQuoteAssetVolume: string;
+  ignore: string;
+}
+
+const binanceApiUrl = '[https://api.binance.com/api/v3/klines';](https://api.binance.com/api/v3/klines';)
+const symbol = 'BTCUSDT';
+const interval = '1h';
+const limit = 6;
+
+const params = {
+  symbol,
+  interval,
+  limit,
+};
+
+axios.get(binanceApiUrl, { params })
+  .then(response => {
+    const data: BinanceResponse[] = response.data;
+    const df = new DataFrame(data);
+
+    // Convert the "close" column to a number
+    df.addColumn('Close', df.get('close').map(Number));
+
+    // Add the DataFrame as a new column to your existing DataFrame
+    // Assuming your existing DataFrame is named "dfExisting"
+    dfExisting.addColumn('BTC Price (Last 6 hours)', df.get('Close'));
+  })
+  .catch(error => {
+    console.error('Failed to retrieve data from Binance:', error);
+  });
