@@ -1,11 +1,7 @@
 import axios from 'axios';
-import { DataFrame } from 'pandas-js';
 
 // DOM element to display data
 const dataContainer = document.getElementById('data-container');
-
-// Create an empty DataFrame to store our data
-const dfExisting = new DataFrame();
 
 // Function to display data in the HTML
 function displayData(data: any) {
@@ -17,8 +13,8 @@ function displayData(data: any) {
   
   // Format and display the data
   for (let i = 0; i < data.length; i++) {
-    const timestamp = new Date(data[i].openTime).toLocaleTimeString();
-    const price = parseFloat(data[i].close).toFixed(2);
+    const timestamp = new Date(data[i][0]).toLocaleTimeString();
+    const price = parseFloat(data[i][4]).toFixed(2);
     html += `<tr><td>${timestamp}</td><td>$${price}</td></tr>`;
   }
   
@@ -26,26 +22,10 @@ function displayData(data: any) {
   dataContainer.innerHTML = html;
 }
 
-interface BinanceResponse {
-  openTime: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  closeTime: number;
-  quoteAssetVolume: string;
-  numTrades: number;
-  takerBuyBaseAssetVolume: string;
-  takerBuyQuoteAssetVolume: string;
-  ignore: string;
-}
-
 const binanceApiUrl = 'https://api.binance.com/api/v3/klines';
 const symbol = 'BTCUSDT';
 const interval = '1h';
 const limit = 6;
-
 const params = {
   symbol,
   interval,
@@ -55,14 +35,8 @@ const params = {
 // Fetch data from Binance API
 axios.get(binanceApiUrl, { params })
   .then((response: any) => {
-    const data: BinanceResponse[] = response.data;
-    const df = new DataFrame(data);
+    const data = response.data;
 
-    // Convert the "close" column to a number
-    df.addColumn('Close', df.get('close').map(Number));
-
-    // Add the DataFrame as a new column to your existing DataFrame
-    dfExisting.addColumn('BTC Price (Last 6 hours)', df.get('Close'));
     
     // Display the data in the HTML
     displayData(data);
