@@ -4,11 +4,8 @@
   "description": "TypeScript demo project",
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "predeploy": "npm run build && cp -r public/* dist/",
-    "deploy": "npm run build && cp -r public/* dist/"
+    "build": "webpack && cp -r public/* dist/",
+    "vercel-build": "npm run build"
   },
   "keywords": [],
   "author": "",
